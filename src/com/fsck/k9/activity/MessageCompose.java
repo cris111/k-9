@@ -107,6 +107,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.net.IDN;
+
 
 public class MessageCompose extends K9Activity implements OnClickListener,
         ProgressDialogFragment.CancelListener {
@@ -1011,7 +1013,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         StringBuilder addressList = new StringBuilder();
 
         // Read current contents of the TextView
-        String text = view.getText().toString();
+        String text = IDN.toASCII(view.getText().toString());
         addressList.append(text);
 
         // Add comma if necessary
@@ -1025,7 +1027,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             addressList.append(", ");
         }
 
-        view.setText(addressList);
+        view.setText(addressList);   //*CR* Here each address must be converted to IDN seperately
 
         return true;
     }
@@ -1245,7 +1247,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
 
     private Address[] getAddresses(MultiAutoCompleteTextView view) {
 
-        return Address.parseUnencoded(view.getText().toString().trim());
+        return Address.parseUnencoded(IDN.toASCII(view.getText().toString().trim()));
     }
 
     /*
@@ -1253,8 +1255,8 @@ public class MessageCompose extends K9Activity implements OnClickListener,
      * @return Address array of recipients this email will be sent to.
      */
     private Address[] getRecipientAddresses() {
-        String addresses = mToView.getText().toString() + mCcView.getText().toString()
-                + mBccView.getText().toString();
+        String addresses = IDN.toASCII(mToView.getText().toString()) + IDN.toASCII(mCcView.getText().toString())
+                + IDN.toASCII(mBccView.getText().toString());
         return Address.parseUnencoded(addresses.trim());
     }
 
